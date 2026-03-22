@@ -600,13 +600,17 @@ export interface MainThreadMessageServiceShape extends IDisposable {
 }
 
 export interface MainThreadModalShape extends IDisposable {
-	$createModalPanel(handle: number, options: { title: string; width: number; height: number }): void;
+	$createModalPanel(handle: number, options: { title: string; width: number; height: number }, contentOptions: IWebviewContentOptions): void;
 	$setModalPanelHtml(handle: number, html: string): void;
+	$setModalOptions(handle: number, options: IWebviewContentOptions): void;
+	$setModalTitle(handle: number, title: string): void;
+	$postMessageToModal(handle: number, message: string, ...buffers: VSBuffer[]): Promise<boolean>;
 	$disposeModalPanel(handle: number): void;
 }
 
 export interface ExtHostModalShape {
 	$onModalPanelDisposed(handle: number): void;
+	$onModalMessage(handle: number, message: string, buffers: SerializableObjectWithBuffers<VSBuffer[]>): void;
 }
 
 export interface MainThreadOutputServiceShape extends IDisposable {
