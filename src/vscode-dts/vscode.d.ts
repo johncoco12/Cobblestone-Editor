@@ -2189,11 +2189,99 @@ declare module 'vscode' {
 	}
 
 	/**
+	 * Content options for a {@link ModalWebview}.
+	 * Mirrors {@link WebviewOptions} but scoped to modal panels.
+	 */
+	export interface ModalWebviewOptions {
+		/**
+		 * Controls whether scripts are enabled in the modal content. Defaults to false.
+		 */
+		readonly enableScripts?: boolean;
+
+		/**
+		 * Controls whether forms are enabled in the modal content.
+		 * Defaults to true when {@link enableScripts} is enabled, otherwise false.
+		 */
+		readonly enableForms?: boolean;
+
+		/**
+		 * Controls whether command URIs are enabled. Defaults to false.
+		 * Pass an array to allow only specific commands.
+		 */
+		readonly enableCommandUris?: boolean | readonly string[];
+
+		/**
+		 * Root paths from which the modal webview can load local resources.
+		 * Defaults to the workspace folders and the extension install directory.
+		 */
+		readonly localResourceRoots?: readonly Uri[];
+
+		/**
+		 * Localhost port mappings applied inside the modal webview.
+		 */
+		readonly portMapping?: readonly WebviewPortMapping[];
+	}
+
+	/**
+	 * The webview surface inside a {@link ModalPanel}.
+	 * Provides two-way messaging, HTML content, and resource URI resolution,
+	 * identical in contract to {@link Webview} but scoped to a modal overlay.
+	 */
+	export interface ModalWebview {
+		/**
+		 * Content options controlling what is allowed inside the modal webview.
+		 * Setting this updates the webview immediately.
+		 */
+		options: ModalWebviewOptions;
+
+		/**
+		 * The complete HTML document rendered inside the modal.
+		 * Setting this value reloads the modal content immediately.
+		 *
+		 * Use {@link acquireVsCodeApi} inside the HTML to communicate back to the extension:
+		 * ```html
+		 * <script>
+		 *   const vscode = acquireVsCodeApi();
+		 *   vscode.postMessage({ type: 'ready' });
+		 * </script>
+		 * ```
+		 */
+		html: string;
+
+		/**
+		 * Fired when the webview content posts a message back to the extension.
+		 */
+		readonly onDidReceiveMessage: Event<any>;
+
+		/**
+		 * Send a message to the webview content.
+		 * Returns `true` if the message was delivered.
+		 *
+		 * @param message A JSON-serializable value.
+		 */
+		postMessage(message: unknown): Thenable<boolean>;
+
+		/**
+		 * Convert a local filesystem URI so it can be loaded inside the modal webview.
+		 * The URI's directory must be listed in {@link ModalWebviewOptions.localResourceRoots}.
+		 *
+		 * @param localResource A `file:` URI pointing to a local resource.
+		 */
+		asWebviewUri(localResource: Uri): Uri;
+
+		/**
+		 * The content-security-policy source string for this modal webview.
+		 * Use this when constructing the CSP `<meta>` tag in your HTML.
+		 */
+		readonly cspSource: string;
+	}
+
+	/**
 	 * Options to configure a {@link ModalPanel}.
 	 */
 	export interface ModalPanelOptions {
 		/**
-		 * The title of the modal panel, shown in the header bar.
+		 * The initial title of the modal panel, shown in the header bar.
 		 */
 		title: string;
 
@@ -2206,21 +2294,34 @@ declare module 'vscode' {
 		 * The height of the modal panel in pixels. Defaults to 400.
 		 */
 		height?: number;
+
+		/**
+		 * Content options for the modal's embedded webview.
+		 */
+		options?: ModalWebviewOptions;
 	}
 
 	/**
-	 * A modal panel that renders custom HTML content as an in-app overlay.
-	 * The HTML is rendered inside a sandboxed iframe and blocks interaction with
-	 * the rest of the editor while it is visible.
+	 * A modal panel that renders a full webview as an in-app overlay.
+	 *
+	 * The panel blocks interaction with the rest of the editor while visible.
+	 * Use {@link ModalPanel.webview} to set HTML content, send and receive messages,
+	 * and load local resources — matching the full surface of a {@link WebviewPanel}.
 	 *
 	 * Created via {@link window.createModalPanel}.
 	 */
 	export interface ModalPanel {
 		/**
-		 * The HTML content rendered in the modal panel's iframe.
-		 * Setting this value updates the displayed content immediately.
+		 * The title shown in the modal header bar.
+		 * Can be updated after creation.
 		 */
-		html: string;
+		title: string;
+
+		/**
+		 * The webview surface of this modal panel.
+		 * Use this to set HTML, post messages, and load local resources.
+		 */
+		readonly webview: ModalWebview;
 
 		/**
 		 * An event that fires when the panel has been permanently disposed.
