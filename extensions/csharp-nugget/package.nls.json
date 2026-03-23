@@ -1,0 +1,15 @@
+{
+	"displayName": "NuGet Package Manager",
+	"description": "Manage NuGet packages for C# projects directly from VS Code.",
+	"command.openManager": "Open NuGet Package Manager",
+	"command.addPackage": "Add NuGet Package",
+	"command.restorePackages": "Restore NuGet Packages",
+	"command.manageSources": "Manage NuGet Sources",
+	"command.openManagerForProject": "Manage NuGet Packages",
+	"configuration.title": "NuGet Package Manager",
+	"configuration.sources.description": "List of NuGet package sources.",
+	"configuration.autoRestore.description": "Automatically restore packages when opening a project.",
+	"configuration.preReleasePackages.description": "Include pre-release packages in search results.",
+	"configuration.dotnetPath.description": "Path to the dotnet CLI executable.",
+	"configuration.searchResultsLimit.description": "Maximum number of search results to display."
+}

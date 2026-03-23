@@ -1,0 +1,135 @@
+{
+	"name": "csharp-nugget",
+	"displayName": "%displayName%",
+	"description": "%description%",
+	"version": "1.0.0",
+	"publisher": "vscode",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.5.0"
+	},
+	"categories": ["Other"],
+	"capabilities": {
+		"virtualWorkspaces": false,
+		"untrustedWorkspaces": {
+			"supported": false
+		}
+	},
+	"activationEvents": [
+		"workspaceContains:**/*.csproj",
+		"workspaceContains:**/*.sln"
+	],
+	"main": "./out/extension",
+	"scripts": {
+		"compile": "gulp compile-extension:csharp-nugget",
+		"watch": "gulp watch-extension:csharp-nugget"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "csharpNugget.openManager",
+				"title": "%command.openManager%",
+				"category": "NuGet",
+				"icon": "$(package)"
+			},
+			{
+				"command": "csharpNugget.addPackage",
+				"title": "%command.addPackage%",
+				"category": "NuGet",
+				"icon": "$(add)"
+			},
+			{
+				"command": "csharpNugget.restorePackages",
+				"title": "%command.restorePackages%",
+				"category": "NuGet",
+				"icon": "$(sync)"
+			},
+			{
+				"command": "csharpNugget.manageSources",
+				"title": "%command.manageSources%",
+				"category": "NuGet",
+				"icon": "$(settings-gear)"
+			},
+			{
+				"command": "csharpNugget.openManagerForProject",
+				"title": "%command.openManagerForProject%",
+				"category": "NuGet",
+				"icon": "$(package)"
+			}
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "csharpNugget.openManagerForProject",
+					"when": "resourceExtname == .csproj",
+					"group": "nuget@1"
+				},
+				{
+					"command": "csharpNugget.restorePackages",
+					"when": "resourceExtname == .csproj",
+					"group": "nuget@2"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "csharpNugget.openManagerForProject",
+					"when": "false"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "%configuration.title%",
+			"properties": {
+				"csharpNugget.sources": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": { "type": "string" },
+							"url": { "type": "string" },
+							"enabled": { "type": "boolean" }
+						}
+					},
+					"default": [
+						{
+							"name": "nuget.org",
+							"url": "https://api.nuget.org/v3/index.json",
+							"enabled": true
+						}
+					],
+					"description": "%configuration.sources.description%"
+				},
+				"csharpNugget.autoRestore": {
+					"type": "boolean",
+					"default": true,
+					"description": "%configuration.autoRestore.description%"
+				},
+				"csharpNugget.preReleasePackages": {
+					"type": "boolean",
+					"default": false,
+					"description": "%configuration.preReleasePackages.description%"
+				},
+				"csharpNugget.dotnetPath": {
+					"type": "string",
+					"default": "dotnet",
+					"description": "%configuration.dotnetPath.description%"
+				},
+				"csharpNugget.searchResultsLimit": {
+					"type": "number",
+					"default": 20,
+					"minimum": 5,
+					"maximum": 100,
+					"description": "%configuration.searchResultsLimit.description%"
+				}
+			}
+		}
+	},
+	"devDependencies": {
+		"@types/node": "22.x"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/microsoft/vscode.git"
+	}
+}
