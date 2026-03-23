@@ -54,8 +54,11 @@ export async function getDependencies(packageType: 'deb' | 'rpm', buildDir: stri
 	}
 
 	const appPath = path.join(buildDir, applicationName);
-	// Add the native modules
-	const files = findResult.stdout.toString().trimEnd().split('\n');
+	// Add the native modules. Skip musl-linked binaries — they link against
+	// libc.musl-x86_64.so.1 which is not present in the glibc sysroot used
+	// when building .deb/.rpm packages, causing dpkg-shlibdeps to fail.
+	// Musl variants are only relevant on Alpine Linux (musl-based) systems.
+	const files = findResult.stdout.toString().trimEnd().split('\n').filter(f => !f.includes('-musl'));
 	// Add the tunnel binary.
 	files.push(path.join(buildDir, 'bin', product.tunnelApplicationName));
 	// Add the main executable.
