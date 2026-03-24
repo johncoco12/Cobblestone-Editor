@@ -84,6 +84,11 @@
 	color: #4ec94e;
 }
 
+/* Build button icon color */
+.run-bar .run-bar-build-btn .codicon {
+	color: var(--vscode-charts-orange, #e8a020);
+}
+
 /* Debug button icon color */
 .run-bar .run-bar-debug-btn .codicon {
 	color: var(--vscode-debugIcon-startForeground, #4ec94e);
@@ -96,6 +101,43 @@
 
 .run-bar .run-bar-stop-btn.hidden {
 	display: none;
+}
+
+/* Debug controls group */
+.run-bar .run-bar-debug-controls {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	height: 100%;
+}
+
+.run-bar .run-bar-debug-controls.hidden {
+	display: none;
+}
+
+/* Icon-only buttons (no label) */
+.run-bar .run-bar-icon-btn {
+	padding: 0 5px;
+}
+
+/* Continue button icon color */
+.run-bar .run-bar-continue-btn .codicon {
+	color: var(--vscode-debugIcon-continueForeground, #4ec94e);
+}
+
+.run-bar .run-bar-continue-btn.hidden,
+.run-bar .run-bar-pause-btn.hidden {
+	display: none;
+}
+
+/* Step button icon color */
+.run-bar .run-bar-step-btn .codicon {
+	color: var(--vscode-debugIcon-stepOverForeground, var(--vscode-titleBar-activeForeground));
+}
+
+/* Restart button icon color */
+.run-bar .run-bar-restart-btn .codicon {
+	color: var(--vscode-debugIcon-restartForeground, #4ec94e);
 }
 
 /* Pulse buttons while session is initializing */
