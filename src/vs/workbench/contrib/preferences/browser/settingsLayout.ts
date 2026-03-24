@@ -379,6 +379,11 @@ export const tocData: ITOCEntry<string> = {
 					label: localize('issueReporter', 'Issue Reporter'),
 					settings: ['issueReporter.*'],
 					hide: !isWeb
+				},
+				{
+					id: 'features/codeStyle',
+					label: localize('codeStyle', 'Code Style'),
+					settings: ['code-style.*']
 				}
 			]
 		},

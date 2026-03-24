@@ -251,6 +251,9 @@ import './contrib/search/browser/searchView.js';
 // Search Editor
 import './contrib/searchEditor/browser/searchEditor.contribution.js';
 
+// Code Style
+import './contrib/codeStyle/browser/codeStyle.contribution.js';
+
 // Sash
 import './contrib/sash/browser/sash.contribution.js';
 
