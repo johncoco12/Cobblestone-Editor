@@ -67,7 +67,7 @@ function mapSeverity(severity: CodeStyleSeverity): MarkerSeverity {
 // ---------------------------------------------------------------------------
 
 /** Finds markers for line-ending violations. */
-function validateLineEndings(text: string, expected: LineEnding, severity: MarkerSeverity): IMarkerData[] {
+export function validateLineEndings(text: string, expected: LineEnding, severity: MarkerSeverity): IMarkerData[] {
 	if (expected === 'auto') {
 		return [];
 	}
@@ -76,7 +76,7 @@ function validateLineEndings(text: string, expected: LineEnding, severity: Marke
 	const wrongPattern = expected === 'lf'
 		? /\r\n|\r/
 		: expected === 'crlf'
-			? /(?<!\r)\n/
+			? /\r(?!\n)|\n/
 			: /\r\n|\n/; // cr
 
 	const description =
@@ -117,7 +117,7 @@ function validateLineEndings(text: string, expected: LineEnding, severity: Marke
 }
 
 /** Finds markers for trailing-whitespace violations. */
-function validateTrailingWhitespace(lines: string[], severity: MarkerSeverity): IMarkerData[] {
+export function validateTrailingWhitespace(lines: string[], severity: MarkerSeverity): IMarkerData[] {
 	const markers: IMarkerData[] = [];
 	for (let i = 0; i < lines.length; i++) {
 		const line = lines[i];
@@ -139,7 +139,7 @@ function validateTrailingWhitespace(lines: string[], severity: MarkerSeverity): 
 }
 
 /** Finds markers for lines that exceed `maxLength` characters. */
-function validateMaxLineLength(lines: string[], maxLength: number, severity: MarkerSeverity): IMarkerData[] {
+export function validateMaxLineLength(lines: string[], maxLength: number, severity: MarkerSeverity): IMarkerData[] {
 	if (maxLength <= 0) {
 		return [];
 	}
@@ -163,7 +163,7 @@ function validateMaxLineLength(lines: string[], maxLength: number, severity: Mar
 }
 
 /** Returns a single marker if the file is missing a final newline. */
-function validateFinalNewline(text: string, lineCount: number, severity: MarkerSeverity): IMarkerData[] {
+export function validateFinalNewline(text: string, lineCount: number, severity: MarkerSeverity): IMarkerData[] {
 	if (!text || text.endsWith('\n') || text.endsWith('\r')) {
 		return [];
 	}
@@ -180,7 +180,7 @@ function validateFinalNewline(text: string, lineCount: number, severity: MarkerS
 }
 
 /** Validates identifier naming rules against document text. */
-function validateNamingRules(text: string, languageId: string, rules: INamingRule[]): IMarkerData[] {
+export function validateNamingRules(text: string, languageId: string, rules: INamingRule[]): IMarkerData[] {
 	const markers: IMarkerData[] = [];
 	const applicableRules = rules.filter(r =>
 		r.enabled &&
@@ -190,8 +190,6 @@ function validateNamingRules(text: string, languageId: string, rules: INamingRul
 	if (applicableRules.length === 0) {
 		return markers;
 	}
-
-	const lines = text.split(/\r\n|\r|\n/);
 
 	for (const rule of applicableRules) {
 		const identifierPattern = IDENTIFIER_PATTERNS[rule.kind];
@@ -211,14 +209,14 @@ function validateNamingRules(text: string, languageId: string, rules: INamingRul
 
 			// Validate prefix
 			if (rule.prefix && !name.startsWith(rule.prefix)) {
-				const pos = positionAt(text, match.index + match[0].indexOf(name), lines);
+				const pos = positionAt(text, match.index + match[0].indexOf(name));
 				markers.push(buildNamingMarker(rule, name, pos, `must start with prefix '${rule.prefix}'`));
 				continue;
 			}
 
 			// Validate suffix
 			if (rule.suffix && !name.endsWith(rule.suffix)) {
-				const pos = positionAt(text, match.index + match[0].indexOf(name), lines);
+				const pos = positionAt(text, match.index + match[0].indexOf(name));
 				markers.push(buildNamingMarker(rule, name, pos, `must end with suffix '${rule.suffix}'`));
 				continue;
 			}
@@ -226,7 +224,7 @@ function validateNamingRules(text: string, languageId: string, rules: INamingRul
 			// Validate style
 			const nameToTest = rule.prefix ? name.slice(rule.prefix.length) : name;
 			if (rule.style !== 'any' && !stylePattern.test(nameToTest)) {
-				const pos = positionAt(text, match.index + match[0].indexOf(name), lines);
+				const pos = positionAt(text, match.index + match[0].indexOf(name));
 				markers.push(buildNamingMarker(rule, name, pos, `must use ${rule.style} naming`));
 			}
 		}
@@ -253,16 +251,30 @@ function buildNamingMarker(
 	};
 }
 
-/** Converts a character offset in `text` to a 1-based line/column pair. */
-function positionAt(text: string, offset: number, lines: string[]): { line: number; column: number } {
-	let remaining = offset;
-	for (let i = 0; i < lines.length; i++) {
-		if (remaining <= lines[i].length) {
-			return { line: i + 1, column: remaining + 1 };
+/** Converts a character offset in `text` to a 1-based line/column pair. Handles CRLF correctly. */
+function positionAt(text: string, offset: number): { line: number; column: number } {
+	const clamped = Math.max(0, Math.min(offset, text.length));
+	let line = 1;
+	let column = 1;
+	let i = 0;
+	while (i < clamped) {
+		const ch = text.charCodeAt(i);
+		if (ch === 13 /* \r */) {
+			// Treat \r\n as a single newline and consume both characters together.
+			if (i + 1 < clamped && text.charCodeAt(i + 1) === 10 /* \n */) {
+				i++;
+			}
+			line++;
+			column = 1;
+		} else if (ch === 10 /* \n */) {
+			line++;
+			column = 1;
+		} else {
+			column++;
 		}
-		remaining -= lines[i].length + 1; // +1 for the newline
+		i++;
 	}
-	return { line: lines.length, column: 1 };
+	return { line, column };
 }
 
 // ---------------------------------------------------------------------------
