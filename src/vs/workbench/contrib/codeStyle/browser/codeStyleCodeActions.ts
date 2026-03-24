@@ -20,12 +20,12 @@ import { IWorkbenchContribution } from '../../../common/contributions.js';
 
 const OWNER = 'code-style';
 
-function isFixable(marker: IMarker): boolean {
+export function isFixable(marker: IMarker): boolean {
 	const code = typeof marker.code === 'string' ? marker.code : undefined;
 	return code === 'trailing-whitespace' || code === 'final-newline' || (code?.startsWith('line-ending:') ?? false);
 }
 
-function buildTextEdit(model: ITextModel, marker: IMarker): IWorkspaceTextEdit | undefined {
+export function buildTextEdit(model: ITextModel, marker: IMarker): IWorkspaceTextEdit | undefined {
 	const code = typeof marker.code === 'string' ? marker.code : undefined;
 
 	if (code === 'trailing-whitespace') {
@@ -69,9 +69,9 @@ function buildTextEdit(model: ITextModel, marker: IMarker): IWorkspaceTextEdit |
 	return undefined;
 }
 
-class CodeStyleCodeActionProvider implements CodeActionProvider {
+export class CodeStyleCodeActionProvider implements CodeActionProvider {
 
-	constructor(private readonly _markerService: IMarkerService) { }
+	constructor(@IMarkerService private readonly _markerService: IMarkerService) { }
 
 	provideCodeActions(model: ITextModel, range: Range, _context: unknown, _token: CancellationToken): CodeActionList {
 		const allMarkers = this._markerService.read({ resource: model.uri, owner: OWNER });

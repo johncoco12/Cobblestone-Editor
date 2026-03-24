@@ -126,7 +126,7 @@ export interface INamedProfile {
 	readonly builtIn?: boolean;
 }
 
-/** Generates a stable unique identifier for a new {@link INamingRule}. */
+/** Generates a unique identifier for a new {@link INamingRule}. */
 export function generateNamingRuleId(): string {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }

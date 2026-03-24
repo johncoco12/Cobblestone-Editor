@@ -160,63 +160,6 @@ Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration).regis
 			description: nls.localize('codeStyle.braceStyle.description', "Where opening curly braces are placed relative to their statement."),
 		},
 
-		// ---- Naming conventions -------------------------------------------
-
-		'code-style.naming.variables': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.variables', "Required naming style for local variables (const / let / var)."),
-		},
-		'code-style.naming.functions': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.functions', "Required naming style for function declarations."),
-		},
-		'code-style.naming.classes': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.classes', "Required naming style for class declarations."),
-		},
-		'code-style.naming.interfaces': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.interfaces', "Required naming style for interface declarations."),
-		},
-		'code-style.naming.types': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.types', "Required naming style for type aliases."),
-		},
-		'code-style.naming.enums': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.enums', "Required naming style for enum declarations."),
-		},
-		'code-style.naming.constants': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.constants', "Required naming style for constant identifiers (ALL_CAPS const)."),
-		},
-		'code-style.naming.parameters': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.parameters', "Required naming style for function parameters."),
-		},
-		'code-style.naming.properties': {
-			type: 'string',
-			enum: ['camelCase', 'PascalCase', 'snake_case', 'SCREAMING_SNAKE_CASE', 'kebab-case', 'any'],
-			default: 'any',
-			description: nls.localize('codeStyle.naming.properties', "Required naming style for object properties."),
-		},
-
 		// ---- Advanced / profile management (hidden from main settings UI) --
 
 		'code-style.namingRules': {

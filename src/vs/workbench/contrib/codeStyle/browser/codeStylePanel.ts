@@ -11,6 +11,7 @@ import { FastDomNode, createFastDomNode } from '../../../../base/browser/fastDom
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { ILayoutService } from '../../../../platform/layout/browser/layoutService.js';
 import { ICommandService } from '../../../../platform/commands/common/commands.js';
+import { IClipboardService } from '../../../../platform/clipboard/common/clipboardService.js';
 import { ICodeStyleService } from '../common/codeStyle.js';
 import {
 	ICodeStyleProfile, INamingRule, ISyntaxOverride,
@@ -90,6 +91,7 @@ export class CodeStylePanel extends Disposable {
 		private readonly _parent: HTMLElement,
 		@ICodeStyleService private readonly _styleService: ICodeStyleService,
 		@ICommandService private readonly _commandService: ICommandService,
+		@IClipboardService private readonly _clipboardService: IClipboardService,
 	) {
 		super();
 
@@ -713,7 +715,7 @@ export class CodeStylePanel extends Disposable {
 		const exportBtn = this._makeButton(nls.localize('codeStyle.profiles.export', 'Copy JSON to Clipboard'), 'code-style-btn code-style-btn-secondary');
 		dom.append(exportRow, exportBtn);
 		this._register(dom.addDisposableListener(exportBtn, dom.EventType.CLICK, () => {
-			navigator.clipboard.writeText(this._styleService.exportToJSON()).catch(() => { /* ignore */ });
+			this._clipboardService.writeText(this._styleService.exportToJSON()).catch(() => { /* ignore */ });
 		}));
 
 		const editorConfigRow = dom.append(panel, dom.$('.code-style-add-row'));
